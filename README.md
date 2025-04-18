@@ -26,7 +26,7 @@ Each microservice has its own Dockerfile and docker-compose.yml for isolated bui
 However, for faster and easier local development, you can simply run the docker-compose.yml located in the project’s root directory:
 ```bash
 git clone https://github.com/sevil-toprak/oteller-com-case.git
-cd otellercom-case
+cd oteller-com-case
 docker-compose up --build
 ```
 
