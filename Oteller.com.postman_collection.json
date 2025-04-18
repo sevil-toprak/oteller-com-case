@@ -51,20 +51,10 @@
 				{
 					"name": "Get Hotel",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VySWQiLCJyb2xlIjoiVVNFUiIsImp0aSI6InVzZXItc2VydmljZSIsImlhdCI6MTc0NDk2Mjc3OSwiZXhwIjoxNzQ0OTY5OTc5fQ.jVs37Zczc5xi-ocWTyiRowW1xCAzNgvhvYWdltFefkI",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/hotels/2",
+							"raw": "http://localhost:8080/api/hotels/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -73,7 +63,7 @@
 							"path": [
 								"api",
 								"hotels",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -163,21 +153,11 @@
 				{
 					"name": "Create Room",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VySWQiLCJyb2xlIjoiVVNFUiIsImp0aSI6InVzZXItc2VydmljZSIsImlhdCI6MTc0NDk2Mjc3OSwiZXhwIjoxNzQ0OTY5OTc5fQ.jVs37Zczc5xi-ocWTyiRowW1xCAzNgvhvYWdltFefkI",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"hotelId\": 1,\n    \"roomNumber\": \"101\",\n    \"capacity\": 3,\n    \"pricePerNight\": \"1200\"\n}",
+							"raw": "{\n    \"hotelId\": 3,\n    \"roomNumber\": \"101\",\n    \"capacity\": 3,\n    \"pricePerNight\": \"1200\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -205,16 +185,6 @@
 						"disableBodyPruning": true
 					},
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NDQ5NDcyODIsImV4cCI6MTc0NDk1NDQ4Mn0._32BMzYvJvO0w0tPgqW_6w221xOS9AU2Pf6BzX6yhf4",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -335,16 +305,6 @@
 				{
 					"name": "Get Reservation By Id",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VySWQiLCJyb2xlIjoiVVNFUiIsImp0aSI6InVzZXItc2VydmljZSIsImlhdCI6MTc0NDk2Mjc3OSwiZXhwIjoxNzQ0OTY5OTc5fQ.jVs37Zczc5xi-ocWTyiRowW1xCAzNgvhvYWdltFefkI",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -386,18 +346,17 @@
 				{
 					"name": "Create Reservation",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VySWQiLCJyb2xlIjoiVVNFUiIsImp0aSI6InVzZXItc2VydmljZSIsImlhdCI6MTc0NDk2Mjc3OSwiZXhwIjoxNzQ0OTY5OTc5fQ.jVs37Zczc5xi-ocWTyiRowW1xCAzNgvhvYWdltFefkI",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"roomId\": 2,\n  \"hotelId\": 1,\n  \"userId\": 1,\n  \"checkInDate\": \"2025-05-01\",\n  \"checkOutDate\": \"2025-05-05\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "http://localhost:8080/api/reservations",
 							"protocol": "http",
@@ -419,7 +378,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/rooms/2",
+							"raw": "http://localhost:8080/api/reservations/3",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -427,8 +386,8 @@
 							"port": "8080",
 							"path": [
 								"api",
-								"rooms",
-								"2"
+								"reservations",
+								"3"
 							]
 						}
 					},
@@ -478,8 +437,17 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var token = pm.response.json(data.token);",
-									"pm.globals.set(\"token\", token);"
+									"let response = pm.response.json();",
+									"console.log(response); // tüm response'u logla",
+									"",
+									"if (response && response.token) {",
+									"    let token = response.token;",
+									"    console.log(\"token:\", token);",
+									"    pm.globals.set(\"token\", token);",
+									"} else {",
+									"    console.error(\"Token not found in response\");",
+									"}",
+									""
 								],
 								"type": "text/javascript",
 								"packages": {}

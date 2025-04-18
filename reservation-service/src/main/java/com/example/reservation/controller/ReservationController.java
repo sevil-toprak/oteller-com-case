@@ -39,7 +39,7 @@ public class ReservationController {
     // Map<String, Object> claims = authentication.getToken().getClaims();
     @GetMapping("/{id}")
     public ResponseEntity<GetReservationResponse> getReservationById(@PathVariable Long id, Authentication authentication) {
-        Long userId = Long.valueOf(authentication.toString());
+        Long userId = Long.valueOf(authentication.getPrincipal().toString());
         GetReservationResponse response = reservationService.getReservationById(id, userId);
         return ResponseEntity.ok(response);
     }
