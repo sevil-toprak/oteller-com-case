@@ -1,0 +1,147 @@
+version: '3.8'
+services:
+
+  zookeeper:
+    image: bitnami/zookeeper:3.9
+    container_name: zookeeper
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: bitnami/kafka:3.5.1
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+    ports:
+      - "9092:9092"
+
+  #API GATEWAY
+  api-gateway:
+    container_name: api_gateway_service
+    build:
+      context: ./api-gateway
+    ports:
+      - "8080:8080"
+
+  # USER SERVICE
+  user_postgres:
+    image: postgres:17
+    container_name: user_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hotel_user
+    ports:
+      - "5435:5432"
+
+  user-service:
+    container_name: user_service
+    build:
+      context: ./user-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - user_postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user_postgres:5432/hotel_user
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+  # HOTEL SERVICE
+  hotel_postgres:
+    image: postgres:17
+    container_name: hotel_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hotel
+    ports:
+      - "5432:5432"
+
+  hotel-service:
+    container_name: hotel_service
+    build:
+      context: ./hotel-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - hotel_postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://hotel_postgres:5432/hotel
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+  # RESERVATION SERVICE
+  reservation_postgres:
+    image: postgres:17
+    container_name: reservation_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: reservation
+    ports:
+      - "5434:5432"
+
+  reservation-service:
+    container_name: reservation_service
+    build:
+      context: ./reservation-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - reservation_postgres
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://reservation_postgres:5432/reservation
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+  # NOTIFICATION SERVICE
+  notification_postgres:
+    image: postgres:17
+    container_name: notification_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: notification
+    ports:
+      - "5433:5432"
+
+  notification-service:
+    container_name: notification_service
+    build:
+      context: ./notification-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - notification_postgres
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://notification_postgres:5432/notification
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+networks:
+  default:
+    name: kafka-network
+    external: false
+
+  kafka-network:
+    driver: bridge

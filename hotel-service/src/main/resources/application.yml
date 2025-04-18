@@ -1,0 +1,18 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: Hotel Service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hotel
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  secret: casesecretkey123456789012345678901234
